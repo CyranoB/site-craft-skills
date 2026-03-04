@@ -1,6 +1,6 @@
 ---
 name: landing-page-builder
-description: Build and deploy polished landing pages to Vercel from a text description. Use when a user asks to "build me a landing page," "create a landing page for my product," "make a website for my startup," "deploy a landing page," or describes a product/service and wants a live page. Generates a single static HTML file with distinctive design and deploys it instantly — no authentication required.
+description: Build and deploy polished landing pages and one-page websites to Vercel from a text description. ALWAYS use this skill when a user wants any kind of single-page web presence created and deployed — landing pages, product pages, startup sites, business websites, portfolio sites, event pages, coming soon pages, or promotional pages. This includes when someone describes a business, product, service, or event and wants a live website, even if they say "website" or "site" instead of "landing page." Common triggers include "build me a landing page," "I need a website for my business," "create a page for my product," "make a website for my startup," "deploy a landing page," or describing any business/product/service (like "I have a piano teaching business" or "I run a photography studio" or "we're launching on Kickstarter") and wanting a web presence. Generates a single self-contained HTML file with distinctive, non-generic design and deploys it live to Vercel instantly — no authentication required. Do NOT use for multi-page apps, e-commerce stores, dashboards, documentation sites, blogs, or reviewing/debugging existing code.
 ---
 
 # Landing Page Builder
@@ -40,7 +40,7 @@ Ask the user to confirm this direction, or say they'd like to see alternatives. 
 
 Once the user confirms, commit to the direction fully and execute with conviction:
 
-**Typography**: Choose distinctive, characterful fonts from Google Fonts. Never default to Inter, Roboto, Arial, or system fonts. Pair a display font with a refined body font. Every landing page should use different fonts — never converge on the same choices.
+**Typography**: Choose distinctive, characterful fonts from Google Fonts. Never default to Inter, Roboto, Arial, or system fonts. Consider using a single font family cohesively (e.g., DM Sans + DM Mono, or a display weight paired with its regular weight) — this often produces more polished results than mixing two unrelated display fonts. Use tight letter-spacing on headings (`-0.02em` to `-0.04em`) for a modern editorial feel. Every landing page should use different fonts — never converge on the same choices.
 
 **Color**: Commit to a cohesive palette. Define all tokens in a `:root` block at the top of your `<style>` tag before writing any other CSS. Every color and spacing value in the stylesheet must reference a token — no hardcoded hex values or magic pixel sizes outside `:root`.
 
@@ -65,15 +65,32 @@ Once the user confirms, commit to the direction fully and execute with convictio
 }
 ```
 
-Dominant colors with sharp accents outperform timid, evenly-distributed palettes. Vary between light and dark themes across generations.
+Dominant colors with sharp accents outperform timid, evenly-distributed palettes. **Light themes are underused and often more distinctive** — warm off-whites, cream, and parchment backgrounds with bold primary colors (deep greens, navy, terracotta) feel fresh and confident. Don't default to dark themes; choose the theme that best serves the brand. A craft cocktail bar might warrant dark and moody, but a freelancer productivity tool might shine on a warm light background with earthy accents. Vary across generations.
 
-**Motion**: Focus on high-impact moments — one well-orchestrated page load with staggered reveals (`animation-delay`) creates more delight than scattered micro-interactions. Use scroll-triggered animations and surprising hover states. CSS-only solutions preferred.
+**Motion**: Focus on physical, tactile feedback over flashy effects. Subtle `scale(0.97)` on button press feels more polished than a glowing box-shadow. One well-orchestrated page load with staggered reveals (`animation-delay`) creates more delight than scattered micro-interactions. Scroll-triggered fade-ins via `IntersectionObserver` (starting from `opacity: 0; transform: translateY(20px)`) add life without being distracting. CSS-only solutions preferred.
 
-**Layout**: Unexpected compositions. Asymmetry. Overlap. Diagonal flow. Grid-breaking elements. Generous negative space OR controlled density.
+**Layout**: Centered, focused layouts with controlled reading widths (`max-width` on headings and body text) often feel more editorial and intentional than split-column layouts. That said, when the product has a visual demo to show (a terminal, a dashboard, an app screenshot), a two-column hero with the demo alongside the headline is powerful — it tells the product story above the fold. Choose the layout that serves the content, not the one that fills the most space.
 
-**Visual texture**: Gradient meshes, noise textures, geometric patterns, layered transparencies, dramatic shadows, decorative borders, grain overlays. No flat white backgrounds by default.
+**Visual texture**: Gradient meshes, noise textures (SVG filter overlays at low opacity), geometric patterns, layered transparencies, decorative borders, grain overlays. Background texture should be felt more than seen — `opacity: 0.03` to `0.07` is the sweet spot. Avoid empty decorative panels; every visual element should communicate something about the product.
 
-**Anti-slop rule**: Never produce generic AI aesthetics — no purple-gradient-on-white, no card grids with rounded corners and drop shadows, no cookie-cutter hero sections. Each page must feel genuinely designed for its specific context.
+**Anti-slop rule**: The goal is to avoid any aesthetic that reads as "AI-generated template." This includes:
+- Purple/violet gradients on white or dark backgrounds
+- Teal/cyan neon accents on dark navy (`#0a-#0f` range backgrounds with `#00D4xx` accents) — this is the dark-mode equivalent of purple-on-white
+- Card grids where every card looks identical until hovered
+- Uppercase section labels with wide letter-spacing ("FEATURES", "HOW IT WORKS")
+- Glowing box-shadows on hover (`rgba(primary, 0.3)` blur effects)
+- Background glow blobs (large radial gradients floating behind content)
+- Floating cards offset from mockups
+- Generic social proof numbers that feel inflated
+
+Each page must feel like a human designer made it for this specific business. Ask yourself: "Would a freelance designer be proud to put this in their portfolio?"
+
+**Content realism**: The copy and content should feel grounded and specific, not like marketing filler. Include:
+- **Testimonials** with named people, specific quotes, and attribution (platform or role) — these are among the strongest trust signals on any landing page
+- **Realistic data** in mockups and demos — if showing an app UI, use specific project names, real-looking numbers, plausible usernames rather than abstract placeholders like "34.5h" or "$4,140"
+- **Prices** when the product/service has them — omitting prices when they exist feels evasive
+- **Specific details** over vague claims — "Works with Figma, VS Code, and Notion" beats "Integrates with your favorite tools"; "Thursday at 7 PM, $65/person, max 12 people" beats "Weekly classes available"
+- **Honest-feeling statistics** — "4,200+ users" feels more credible than "12,000+ users" for an early-stage product
 
 **Icons**: Pick one icon library per page based on the design direction:
 
