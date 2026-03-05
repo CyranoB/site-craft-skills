@@ -390,7 +390,7 @@ function drawFrame(index) {
 ## Frame-to-Scroll Binding
 
 ```js
-const FRAME_SPEED = 2.0; // 1.8-2.2, higher = video finishes earlier in scroll
+const FRAME_SPEED = 1.0; // Always 1.0 — video plays across the full scroll
 let currentFrame = 0;
 
 ScrollTrigger.create({

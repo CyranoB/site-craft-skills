@@ -48,7 +48,7 @@ These are strong defaults backed by visual reasoning. Each solves a specific pro
 11. **Hero prominence + generous scroll** — hero gets 20%+ scroll range, 800vh+ total for 6 sections; cramped scroll ranges make animations feel rushed
 12. **Side-aligned text** — text in outer 40% zones (`align-left`/`align-right`) so the video occupies the viewport center without competition. Exception: stats with full dark overlay
 13. **Circle-wipe hero reveal** — hero is a standalone 100vh section; the canvas reveals via expanding `clip-path: circle()` as the hero scrolls away
-14. **Frame speed 1.8-2.2** — the video completes by ~55% scroll, leaving room for content sections
+14. **Frame speed 1.0** — the video plays across the entire scroll so frames stay synchronized with scroll position. Content sections animate over the live video (the dark scrim ensures readability). Never use FRAME_SPEED > 1.0 — it causes the video to freeze early, leaving dead scroll space
 
 ## Workflow
 
@@ -174,7 +174,7 @@ Vercel's deploy endpoint has a ~4.5MB compressed payload limit. Full-resolution 
 ```bash
 ffmpeg -y -i video.mp4 -vf "fps=12,scale=960:-1" -c:v libwebp -quality 65 frames/frame_%04d.webp
 ```
-Then update `FRAME_COUNT` in `js/app.js` to match. A typical 8s video at 960px/12fps = ~96 frames, ~2MB compressed.
+Then update `FRAME_COUNT` in `js/app.js` to match the new count. A typical 8s video at 960px/12fps = ~96 frames, ~2MB compressed. No need to change `FRAME_SPEED` — it stays at 1.0 regardless of frame count.
 
 ## Mobile Considerations
 
@@ -202,17 +202,16 @@ All use stagger (0.1-0.15s). Easing: `power3.out` (scale-up: `power2.out`, clip-
 
 ## Scroll Range Planning
 
-With `FRAME_SPEED: 2.0`, the video finishes around 50-55% scroll. Content sections should be distributed across the full scroll range — some overlap with active video playback, some appear after the video freezes on its last frame.
+With `FRAME_SPEED: 1.0`, the video plays across the entire scroll — every section has live video behind it. The dark scrim on `.section-inner` ensures text stays readable over any frame.
 
 **Formula for N content sections** (excludes the hero, which is a standalone element):
 
 | Zone | Scroll range | Purpose |
 |------|-------------|---------|
 | Hero reveal | 0-7% | Hero fades out, circle-wipe reveals canvas |
-| Video-active sections | 8-55% | Sections animate over moving video |
-| Video-frozen sections | 55-100% | Sections animate over the final frame |
+| Content sections | 8-100% | Sections animate over live video |
 
-Within each zone, divide evenly with ~2% gaps between sections. Each section needs at least 8% range for animations to breathe.
+Within the content zone, divide evenly with ~2% gaps between sections. Each section needs at least 8% range for animations to breathe.
 
 **Example for 6 sections:**
 
@@ -239,7 +238,7 @@ Dark overlay `enter`/`leave` should match the stats section range (here: 0.56 to
 - **Cycling feature cards in a pinned section** — each card gets too little scroll time. Give each feature its own section (8-10% scroll range) with its own animation type
 - **Pure cover mode** (scale at 1.0) — clips into header. Use IMAGE_SCALE 0.82-0.90
 - **Pure contain mode** — leaves visible border. Padded cover + bg sampling solves this
-- **FRAME_SPEED < 1.8** — video feels sluggish; use 1.8-2.2
+- **FRAME_SPEED > 1.0** — video freezes before scroll ends, leaving dead space where the user scrolls past a static frame. Always use 1.0
 - **Hero < 20% scroll range** — first impression needs breathing room
 - **Same animation on consecutive sections** — never repeat the same entrance type back-to-back
 - **Text without a nearly-opaque backdrop over video** — video frames are busy and bright; even `rgba(0,0,0,0.78)` is too transparent. Use `rgba(0,0,0,0.92)` on `.section-inner` so it reads as a solid dark card. Never use gradients that fade below 0.9. Never reduce text `opacity` below 0.85 — use `color` values for hierarchy instead
