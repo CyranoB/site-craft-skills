@@ -27,11 +27,14 @@ The Vercel deploy endpoint has upload limits. Before deploying, check the total 
 du -sh <directory>
 ```
 
-- **Under 50MB**: Deploy directly
-- **50-100MB**: Warn the user it may be slow, but proceed
-- **Over 100MB**: Suggest reducing asset sizes (e.g., lower frame count, compress images) before deploying
+- **Under 4.5MB** (compressed): Deploy directly — this is the Vercel function payload limit
+- **Over 4.5MB**: Reduce asset sizes before deploying
 
-For scroll-sequence sites with many frames, the typical size is 10-25MB — well within limits.
+For scroll-sequence sites, the 1920px/25fps extraction often exceeds this limit. To fit, re-extract frames at lower resolution and fps:
+```bash
+ffmpeg -y -i video.mp4 -vf "fps=12,scale=960:-1" -c:v libwebp -quality 65 frames/frame_%04d.webp
+```
+Then update `FRAME_COUNT` in `js/app.js` to match the new count. A typical 8-second video at 960px/12fps produces ~96 frames at ~2MB compressed — well within limits.
 
 ### 3. Deploy
 

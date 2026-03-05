@@ -170,7 +170,11 @@ If the user wants the site live, use the `vercel-deploy` skill:
 bash skills/vercel-deploy/scripts/deploy.sh <project-directory>
 ```
 
-Check the total directory size first (`du -sh`) — scroll-sequence sites with 150-300 frames typically run 10-25MB, well within Vercel's limits. If over 50MB, suggest reducing frame count or resolution before deploying.
+Vercel's deploy endpoint has a ~4.5MB compressed payload limit. Full-resolution scroll-sequence sites (1920px, 200 frames) typically exceed this. Before deploying, re-extract frames at deploy-friendly resolution:
+```bash
+ffmpeg -y -i video.mp4 -vf "fps=12,scale=960:-1" -c:v libwebp -quality 65 frames/frame_%04d.webp
+```
+Then update `FRAME_COUNT` in `js/app.js` to match. A typical 8s video at 960px/12fps = ~96 frames, ~2MB compressed.
 
 ## Mobile Considerations
 
