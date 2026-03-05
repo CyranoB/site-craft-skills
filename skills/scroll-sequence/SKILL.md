@@ -134,7 +134,9 @@ Read `references/implementation.md` for HTML templates (content sections, stats 
 Key concerns:
 - **Side-aligned text zones**: `.align-left` and `.align-right` keep text in the outer 40%, leaving center for video
 - **Scroll sections**: `position: absolute` within scroll container, positioned at midpoint of enter/leave range
-- **Text contrast**: Never use `#999` on light backgrounds — `#666` minimum for body text
+- **Text contrast over video**: Text floats over canvas frames that can be any brightness. Two rules:
+  1. **Nearly-opaque panel**: Always add `background: rgba(0,0,0,0.92) !important` on `.section-inner`. The `!important` is needed because GSAP's inline style cascade can interfere. This reads as a solid dark card with just a hint of the video at the edges. Subtle scrims (0.5-0.8) are NOT enough — video frames are busy and bright.
+  2. **No opacity reduction on text**: Do NOT set `opacity` below 0.85 on `.section-label`, `.section-body`, or `.section-note`. These elements sit over video — reducing opacity makes them gray and invisible on bright frames. Use `color` values for hierarchy instead (e.g. `#fff` for headings, `#ddd` for body, `#aaa` for labels).
 - **Font and color choices**: Be creative and distinctive, complement the video content
 
 Read `references/implementation.md` (CSS Patterns section) for the full CSS including mobile breakpoints.
@@ -227,6 +229,7 @@ Dark overlay `enter`/`leave` should match the stats section range (here: 0.56 to
 - **FRAME_SPEED < 1.8** — video feels sluggish; use 1.8-2.2
 - **Hero < 20% scroll range** — first impression needs breathing room
 - **Same animation on consecutive sections** — never repeat the same entrance type back-to-back
+- **Text without a nearly-opaque backdrop over video** — video frames are busy and bright; even `rgba(0,0,0,0.78)` is too transparent. Use `rgba(0,0,0,0.92)` on `.section-inner` so it reads as a solid dark card. Never use gradients that fade below 0.9. Never reduce text `opacity` below 0.85 — use `color` values for hierarchy instead
 - **Wide centered grids over canvas** — redesign as vertical lists in the 40% side zone
 - **Scroll height < 800vh** for 6 sections — everything feels rushed
 
@@ -253,6 +256,7 @@ Beyond the default circle-wipe, other reveal options:
 
 ## Troubleshooting
 
+- **Text scrim not visible / text unreadable over video**: The `#scroll-container` needs `z-index: 8` (or higher than `.canvas-wrap` at z-index 5). Without it, the fixed canvas covers the scroll sections and the scrim background is invisible even though it's in the CSS.
 - **Frames not loading**: Must serve via HTTP, not `file://`
 - **Choppy scrolling**: Increase `scrub` value, reduce frame count
 - **White flashes**: Ensure all frames loaded before hiding loader

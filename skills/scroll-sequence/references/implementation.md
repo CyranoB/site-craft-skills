@@ -142,7 +142,10 @@ html, body { background: var(--bg-dark); color: var(--text-on-dark); font-family
 }
 
 /* --- Scroll container --- */
-#scroll-container { position: relative; height: 800vh; }
+/* z-index must be higher than .canvas-wrap (z-index:5) so sections
+   and their dark scrims render ON TOP of the video canvas. Without this,
+   the fixed canvas covers the scroll sections and the scrim is invisible. */
+#scroll-container { position: relative; z-index: 8; height: 800vh; }
 
 /* --- Scroll sections (shared) --- */
 .scroll-section {
@@ -151,17 +154,29 @@ html, body { background: var(--bg-dark); color: var(--text-on-dark); font-family
   opacity: 0; pointer-events: none; z-index: 8;
   transform: translateY(-50%); /* center on its top value */
 }
-.section-inner { display: flex; flex-direction: column; gap: 0.75rem; }
+/* Nearly-opaque dark panel behind text. Video frames can be extremely bright
+   and busy — a subtle scrim is not enough. 0.92 makes the text panel read as
+   a solid dark card while still letting a hint of the frame show at the edges.
+   !important is needed because GSAP animations can interfere with backgrounds
+   via inline style cascading — this guarantees the scrim is always visible. */
+.section-inner {
+  display: flex; flex-direction: column; gap: 0.75rem;
+  background: rgba(0, 0, 0, 0.92) !important;
+  padding: 2rem 2.25rem; border-radius: 12px;
+}
+/* Text inside scroll sections sits over video via the scrim.
+   Do NOT reduce opacity on these elements — the scrim handles contrast.
+   Lowering opacity makes text gray/invisible over bright frames. */
 .section-label {
   font-family: var(--font-body); font-size: 0.75rem;
-  text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.5;
+  text-transform: uppercase; letter-spacing: 0.15em; opacity: 0.85;
 }
 .section-heading {
   font-family: var(--font-display); font-size: clamp(2rem, 4vw, 4.5rem);
-  line-height: 1.05; letter-spacing: -0.02em;
+  line-height: 1.05; letter-spacing: -0.02em; color: #fff;
 }
-.section-body { font-size: 1.05rem; line-height: 1.65; opacity: 0.75; max-width: 38ch; }
-.section-note { font-size: 0.85rem; opacity: 0.45; font-style: italic; }
+.section-body { font-size: 1.05rem; line-height: 1.65; opacity: 0.92; max-width: 38ch; }
+.section-note { font-size: 0.85rem; opacity: 0.7; font-style: italic; }
 
 /* Side-aligned text zones -- product occupies center */
 .align-left { padding-left: 5vw; padding-right: 55vw; }
@@ -221,7 +236,7 @@ html, body { background: var(--bg-dark); color: var(--text-on-dark); font-family
   }
 
   .scroll-section .section-inner {
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.95) !important;
     padding: 1.5rem;
     border-radius: 8px;
   }
