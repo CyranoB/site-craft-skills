@@ -4,15 +4,23 @@
     "name": "CyranoB"
   },
   "metadata": {
-    "description": "Landing page builder and deployer for Claude Code"
+    "description": "Landing page builder and scroll-sequence generator for Claude Code"
   },
   "plugins": [
     {
       "name": "landing-page-builder",
       "source": "./",
       "description": "Build and deploy polished landing pages to Vercel from a text description",
-      "version": "1.0.0",
+      "version": "1.1.0",
       "keywords": ["landing-page", "frontend", "vercel", "deploy"],
+      "category": "development"
+    },
+    {
+      "name": "scroll-sequence",
+      "source": "./",
+      "description": "Turn a video file into an Apple-style scroll-sequence website with frame-by-frame playback and choreographed animations",
+      "version": "1.0.0",
+      "keywords": ["scroll-sequence", "scrollytelling", "video", "animation", "gsap", "frontend"],
       "category": "development"
     }
   ]

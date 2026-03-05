@@ -1,18 +1,34 @@
-# Landing Page Builder
+# Frontpage Builder Skills
 
-A [Claude Code skill](https://docs.anthropic.com/en/docs/claude-code/skills) that generates polished, distinctive landing pages from a text description and deploys them live to Vercel — no authentication required.
+A collection of [Claude Code skills](https://docs.anthropic.com/en/docs/claude-code/skills) for generating polished web experiences from natural-language descriptions.
 
-## What it does
+## Skills
+
+### Landing Page Builder
+
+Generates distinctive landing pages from a text description and deploys them live to Vercel — no authentication required.
 
 1. Takes a natural-language description of a product, service, or idea
 2. Generates a self-contained `index.html` with inline CSS/JS
 3. Deploys it instantly to Vercel and returns a live preview URL
 
-## Example prompts
-
+**Example prompts:**
 - "Build me a landing page for a dog walking app called PawPals"
 - "Create a website for my SaaS product that does invoice automation"
 - "Deploy a landing page for a coffee subscription service, dark luxury aesthetic"
+
+### Scroll Sequence
+
+Turns a video file into a premium scroll-sequence website — the Apple-style experience where scrolling scrubs through video frames with choreographed text animations. Requires `ffmpeg`.
+
+1. Analyzes the video and extracts frames as WebP images
+2. Builds a scroll-driven site with canvas rendering, GSAP animations, and Lenis smooth scroll
+3. Outputs a portable HTML/CSS/JS project (no build tools)
+
+**Example prompts:**
+- "Turn this product video into an Apple-style scroll experience"
+- "Build a scroll-sequence site from my demo.mp4"
+- "Create a scrollytelling page from this brand film"
 
 ## Design philosophy
 
@@ -32,10 +48,13 @@ Design guidelines are adapted from [Anthropic's frontend-design skill](https://g
 ├── plugin.json                                  # Plugin manifest
 └── marketplace.json                             # Marketplace catalog
 skills/
-└── landing-page-builder/
-    ├── SKILL.md                                 # Workflow and design instructions
-    ├── scripts/deploy.sh                        # Vercel deployment (claimable, no auth)
-    └── references/web-design-guidelines.md      # Accessibility and UX compliance rules
+├── landing-page-builder/
+│   ├── SKILL.md                                 # Workflow and design instructions
+│   ├── scripts/deploy.sh                        # Vercel deployment (claimable, no auth)
+│   └── references/web-design-guidelines.md      # Accessibility and UX compliance rules
+└── scroll-sequence/
+    ├── SKILL.md                                 # Workflow, defaults, and animation reference
+    └── references/implementation.md             # Full HTML/CSS/JS implementation patterns
 ```
 
 ## Installation
@@ -55,15 +74,22 @@ Add the marketplace and install the plugin from within Claude Code:
 
 ```bash
 git clone https://github.com/CyranoB/frontpage-builder-skill.git /tmp/frontpage-builder-skill
+
+# Landing Page Builder
 mkdir -p .claude/skills/landing-page-builder
 cp -r /tmp/frontpage-builder-skill/skills/landing-page-builder/* .claude/skills/landing-page-builder/
+
+# Scroll Sequence
+mkdir -p .claude/skills/scroll-sequence
+cp -r /tmp/frontpage-builder-skill/skills/scroll-sequence/* .claude/skills/scroll-sequence/
 ```
 
 For a global install (available in all projects):
 
 ```bash
-mkdir -p ~/.claude/skills/landing-page-builder
+mkdir -p ~/.claude/skills/landing-page-builder ~/.claude/skills/scroll-sequence
 cp -r /tmp/frontpage-builder-skill/skills/landing-page-builder/* ~/.claude/skills/landing-page-builder/
+cp -r /tmp/frontpage-builder-skill/skills/scroll-sequence/* ~/.claude/skills/scroll-sequence/
 ```
 
 ## Credits
