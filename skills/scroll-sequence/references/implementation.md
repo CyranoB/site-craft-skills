@@ -390,7 +390,9 @@ function drawFrame(index) {
 ## Frame-to-Scroll Binding
 
 ```js
-const FRAME_SPEED = 1.0; // Always 1.0 — video plays across the full scroll
+// Video completion point: FRAME_SPEED = 100 / desired_percent
+// 100% → 1.0 (default, full sync), 80% → 1.25, 60% → 1.67, 50% → 2.0
+const FRAME_SPEED = 1.0;
 let currentFrame = 0;
 
 ScrollTrigger.create({
