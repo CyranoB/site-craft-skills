@@ -20,7 +20,6 @@ The result is a website where scrolling controls video playback frame-by-frame o
 - Edit or trim the source video
 - Add audio/sound sync
 - Build multi-page sites, dashboards, or e-commerce stores
-- Deploy (use a separate deployment skill or manual hosting)
 
 ## Input
 
@@ -162,6 +161,16 @@ The JavaScript has 9 components. Read `references/implementation.md` for the com
 1. Serve locally: `npx serve .` or `python3 -m http.server 8000`
 2. Scroll through fully — verify each section has a DIFFERENT animation type
 3. Confirm: smooth scroll, frame playback, staggered reveals, marquee slides, counters count up, dark overlay fades, CTA persists at end
+
+### Step 9: Deploy (optional)
+
+If the user wants the site live, use the `vercel-deploy` skill:
+
+```bash
+bash skills/vercel-deploy/scripts/deploy.sh <project-directory>
+```
+
+Check the total directory size first (`du -sh`) — scroll-sequence sites with 150-300 frames typically run 10-25MB, well within Vercel's limits. If over 50MB, suggest reducing frame count or resolution before deploying.
 
 ## Mobile Considerations
 

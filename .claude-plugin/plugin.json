@@ -1,5 +1,5 @@
 {
   "name": "frontpage-builder-skill",
-  "description": "Landing page builder and scroll-sequence generator for Claude Code. Includes two skills: a landing page builder that deploys to Vercel, and a scroll-sequence site generator that turns video files into Apple-style scroll-driven experiences.",
-  "version": "1.1.0"
+  "description": "Landing page builder, scroll-sequence generator, and Vercel deployer for Claude Code. Three skills: a landing page builder, an Apple-style scroll-sequence generator from video files, and a zero-auth Vercel deployment tool.",
+  "version": "1.2.0"
 }

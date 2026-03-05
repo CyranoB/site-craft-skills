@@ -149,7 +149,13 @@ Write the file to a temporary project directory.
 
 ### 4. Deploy
 
-Deploy immediately after generating the HTML. Use scripts/deploy.sh to deploy the landing page.
+Deploy immediately after generating the HTML. Use the `vercel-deploy` skill's script:
+
+```bash
+bash skills/vercel-deploy/scripts/deploy.sh <project-directory>
+```
+
+If the `vercel-deploy` skill is installed at a different path, look for it at `../vercel-deploy/scripts/deploy.sh` relative to this skill, or in `.claude/skills/vercel-deploy/scripts/`.
 
 Present results:
 

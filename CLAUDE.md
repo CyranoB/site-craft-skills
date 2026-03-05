@@ -14,30 +14,34 @@ This is a no-build, no-dependencies project. There is no package.json, no compil
 .claude-plugin/
 ├── plugin.json            # Plugin manifest (name, version, description)
 └── marketplace.json       # Marketplace catalog entry (owner, keywords, category)
-skills/landing-page-builder/
-├── SKILL.md               # Core skill: YAML frontmatter triggers + workflow steps + design instructions
-├── scripts/deploy.sh      # Bash script that tars and POSTs to Vercel's deploy API
-└── references/web-design-guidelines.md  # Accessibility/UX compliance rules (read by SKILL.md step 3)
+skills/
+├── landing-page-builder/
+│   ├── SKILL.md               # Workflow + design instructions
+│   └── references/web-design-guidelines.md  # Accessibility/UX compliance rules
+├── scroll-sequence/
+│   ├── SKILL.md               # Workflow, defaults, animation reference
+│   └── references/implementation.md  # Full HTML/CSS/JS patterns
+└── vercel-deploy/
+    ├── SKILL.md               # Deploy workflow and size guidelines
+    └── scripts/deploy.sh      # Bash script that tars and POSTs to Vercel's deploy API
 ```
 
-**Skill workflow (defined in SKILL.md):**
-1. Gather context from user's description (ask at most one clarifying question)
-2. Propose a design direction, get user confirmation
-3. Generate a single `index.html` with inline CSS/JS to `/tmp/landing-page/`
-4. Run `deploy.sh /tmp/landing-page/` to package and deploy to Vercel, returning preview + claim URLs
+**Landing page workflow:** gather context → propose design → generate HTML → deploy via vercel-deploy
+**Scroll sequence workflow:** verify ffmpeg → analyze video → extract frames → scaffold → build HTML/CSS/JS → test → deploy via vercel-deploy
 
 ## Key Files
 
 **`SKILL.md` frontmatter** controls when the skill auto-triggers in Claude Code. The `description` field is what Claude uses as trigger keywords — edit it to change when the skill activates. The `name` field must match the directory name.
 
-**`deploy.sh` contract:**
+**`vercel-deploy/scripts/deploy.sh` contract:**
 - Takes one argument: path to a directory (or a `.tgz` file)
 - Writes status messages to **stderr**; outputs JSON response to **stdout**
 - Auto-renames a single non-`index.html` file in the directory to `index.html`
 - Returns JSON: `{ previewUrl, claimUrl, deploymentId, projectId }`
 - Deploy endpoint: `https://claude-skills-deploy.vercel.com/api/deploy`
+- Used by both landing-page-builder and scroll-sequence skills
 
-**`web-design-guidelines.md`** is referenced by step 3 of SKILL.md for accessibility and UX compliance rules. It is not read at install time — only when the skill executes.
+**`web-design-guidelines.md`** is referenced by the landing-page-builder skill for accessibility and UX compliance rules. It is not read at install time — only when the skill executes.
 
 ## Version Management
 
@@ -68,7 +72,7 @@ Test the deploy script directly (bypassing the skill):
 ```bash
 mkdir -p /tmp/landing-page
 echo '<html><body>test</body></html>' > /tmp/landing-page/index.html
-bash skills/landing-page-builder/scripts/deploy.sh /tmp/landing-page
+bash skills/vercel-deploy/scripts/deploy.sh /tmp/landing-page
 ```
 
 To test the full skill workflow, prompt Claude Code with:

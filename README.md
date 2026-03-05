@@ -41,6 +41,15 @@ Every generated page follows an opinionated design approach:
 
 Design guidelines are adapted from [Anthropic's frontend-design skill](https://github.com/anthropics/skills/tree/main/skills/frontend-design) and [Vercel's Web Interface Guidelines](https://github.com/vercel-labs/web-interface-guidelines).
 
+### Vercel Deploy
+
+Deploy any static site directory to Vercel instantly — no authentication, no config. Used by both skills above, or standalone.
+
+**Example prompts:**
+- "Deploy this to Vercel"
+- "Put this site live"
+- "Host this directory"
+
 ## Plugin structure
 
 ```
@@ -50,11 +59,13 @@ Design guidelines are adapted from [Anthropic's frontend-design skill](https://g
 skills/
 ├── landing-page-builder/
 │   ├── SKILL.md                                 # Workflow and design instructions
-│   ├── scripts/deploy.sh                        # Vercel deployment (claimable, no auth)
 │   └── references/web-design-guidelines.md      # Accessibility and UX compliance rules
-└── scroll-sequence/
-    ├── SKILL.md                                 # Workflow, defaults, and animation reference
-    └── references/implementation.md             # Full HTML/CSS/JS implementation patterns
+├── scroll-sequence/
+│   ├── SKILL.md                                 # Workflow, defaults, and animation reference
+│   └── references/implementation.md             # Full HTML/CSS/JS implementation patterns
+└── vercel-deploy/
+    ├── SKILL.md                                 # Deploy workflow and size guidelines
+    └── scripts/deploy.sh                        # Vercel claimable deployment (no auth)
 ```
 
 ## Installation
@@ -82,14 +93,19 @@ cp -r /tmp/frontpage-builder-skill/skills/landing-page-builder/* .claude/skills/
 # Scroll Sequence
 mkdir -p .claude/skills/scroll-sequence
 cp -r /tmp/frontpage-builder-skill/skills/scroll-sequence/* .claude/skills/scroll-sequence/
+
+# Vercel Deploy (used by both skills above)
+mkdir -p .claude/skills/vercel-deploy
+cp -r /tmp/frontpage-builder-skill/skills/vercel-deploy/* .claude/skills/vercel-deploy/
 ```
 
 For a global install (available in all projects):
 
 ```bash
-mkdir -p ~/.claude/skills/landing-page-builder ~/.claude/skills/scroll-sequence
+mkdir -p ~/.claude/skills/landing-page-builder ~/.claude/skills/scroll-sequence ~/.claude/skills/vercel-deploy
 cp -r /tmp/frontpage-builder-skill/skills/landing-page-builder/* ~/.claude/skills/landing-page-builder/
 cp -r /tmp/frontpage-builder-skill/skills/scroll-sequence/* ~/.claude/skills/scroll-sequence/
+cp -r /tmp/frontpage-builder-skill/skills/vercel-deploy/* ~/.claude/skills/vercel-deploy/
 ```
 
 ## Credits
