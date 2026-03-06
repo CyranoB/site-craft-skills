@@ -169,17 +169,35 @@ The JavaScript has 9 components. Read `references/implementation.md` for the com
 
 ### Step 9: Deploy (optional)
 
-If the user wants the site live, use the `vercel-deploy` skill:
+If the user wants the site live, choose a deployment target:
+
+**Option A — Vercel (default, no auth required):**
 
 ```bash
 bash skills/vercel-deploy/scripts/deploy.sh <project-directory>
 ```
 
-Vercel's deploy endpoint has a ~4.5MB compressed payload limit. Full-resolution scroll-sequence sites (1920px, 200 frames) typically exceed this. Before deploying, re-extract frames at deploy-friendly resolution:
+Vercel's deploy endpoint has a ~4.5MB compressed payload limit. Full-resolution scroll-sequence sites (1920px, 200 frames) typically exceed this. Before deploying to Vercel, re-extract frames at deploy-friendly resolution:
 ```bash
 ffmpeg -y -i video.mp4 -vf "fps=12,scale=960:-1" -c:v libwebp -quality 65 frames/frame_%04d.webp
 ```
 Then update `FRAME_COUNT` in `js/app.js` to match the new count. A typical 8s video at 960px/12fps = ~96 frames, ~2MB compressed. No need to change `FRAME_SPEED` — it stays at 1.0 regardless of frame count.
+
+**Option B — AWS S3 + CloudFront (no size limit):**
+
+```bash
+bash skills/aws-deploy/scripts/deploy.sh <project-directory> [--region us-east-1]
+```
+
+AWS has no payload size limit — deploy full-resolution 1920px frames without downsampling. Use this when the user requests AWS hosting, or when asset size exceeds Vercel's 4.5MB limit and the user doesn't want to reduce quality. Requires AWS CLI and credentials. First deploy takes 3-5 minutes; subsequent deploys reuse the same stack. If the `aws-deploy` skill is installed at a different path, look for it at `../aws-deploy/scripts/deploy.sh` relative to this skill, or in `.claude/skills/aws-deploy/scripts/`.
+
+**Option C — Google Cloud / Firebase (no size limit):**
+
+```bash
+bash skills/gcp-deploy/scripts/deploy.sh <project-directory> [project-id]
+```
+
+GCP/Firebase has no strict payload size limit for Hosting — deploy full-resolution frames without downsampling. Use this when the user requests GCP or Firebase hosting, or when asset size exceeds Vercel's 4.5MB limit. Requires Firebase CLI and local authentication. If the `gcp-deploy` skill is installed at a different path, look for it at `../gcp-deploy/scripts/deploy.sh` relative to this skill, or in `.claude/skills/gcp-deploy/scripts/`.
 
 ## Mobile Considerations
 

@@ -4,7 +4,7 @@
     "name": "CyranoB"
   },
   "metadata": {
-    "description": "Site Craft — landing page builder, scroll-sequence generator, and Vercel deployer for Claude Code"
+    "description": "Site Craft — landing page builder, scroll-sequence generator, and deployers for Vercel, AWS, and GCP"
   },
   "plugins": [
     {
@@ -29,6 +29,22 @@
       "description": "Deploy any static site directory to Vercel instantly — no authentication required",
       "version": "1.0.0",
       "keywords": ["vercel", "deploy", "hosting", "static-site"],
+      "category": "development"
+    },
+    {
+      "name": "aws-deploy",
+      "source": "./",
+      "description": "Deploy any static site to AWS S3 + CloudFront with HTTPS, global CDN, and no size limit",
+      "version": "1.0.0",
+      "keywords": ["aws", "s3", "cloudfront", "deploy", "hosting", "static-site"],
+      "category": "development"
+    },
+    {
+      "name": "gcp-deploy",
+      "source": "./",
+      "description": "Deploy any static site to Google Cloud (Firebase Hosting) with HTTPS and global CDN",
+      "version": "1.0.0",
+      "keywords": ["gcp", "google-cloud", "firebase", "deploy", "hosting", "static-site"],
       "category": "development"
     }
   ]

@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Static site hosting with S3 + CloudFront (OAC)
+
+Parameters:
+  SiteName:
+    Type: String
+    Description: Site identifier used for bucket naming
+    AllowedPattern: '[a-z0-9][a-z0-9\-]*'
+    ConstraintDescription: Lowercase alphanumeric and hyphens, must start with alphanumeric
+
+Resources:
+  ContentBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'site-craft-${SiteName}-${AWS::AccountId}'
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  OriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub '${SiteName}-oac'
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  Distribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+        Origins:
+          - Id: S3Origin
+            DomainName: !GetAtt ContentBucket.RegionalDomainName
+            OriginAccessControlId: !Ref OriginAccessControl
+            S3OriginConfig:
+              OriginAccessIdentity: ''
+        DefaultCacheBehavior:
+          TargetOriginId: S3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6
+          Compress: true
+        HttpVersion: http2and3
+        CustomErrorResponses:
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+          - ErrorCode: 404
+            ResponseCode: 404
+            ResponsePagePath: /index.html
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref ContentBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowCloudFrontServicePrincipal
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub '${ContentBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${Distribution}'
+
+Outputs:
+  BucketName:
+    Value: !Ref ContentBucket
+  DistributionId:
+    Value: !Ref Distribution
+  DistributionDomainName:
+    Value: !GetAtt Distribution.DomainName

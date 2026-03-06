@@ -1,5 +1,5 @@
 {
   "name": "site-craft-skills",
-  "description": "Site Craft — three skills for building and deploying web experiences: a landing page builder, an Apple-style scroll-sequence generator from video files, and a zero-auth Vercel deployer.",
-  "version": "1.2.0"
+  "description": "Site Craft — five skills for building and deploying web experiences: a landing page builder, an Apple-style scroll-sequence generator, and deployers for Vercel, AWS, and GCP.",
+  "version": "1.3.0"
 }

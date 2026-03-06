@@ -21,13 +21,22 @@ skills/
 ├── scroll-sequence/
 │   ├── SKILL.md               # Workflow, defaults, animation reference
 │   └── references/implementation.md  # Full HTML/CSS/JS patterns
-└── vercel-deploy/
-    ├── SKILL.md               # Deploy workflow and size guidelines
-    └── scripts/deploy.sh      # Bash script that tars and POSTs to Vercel's deploy API
+├── vercel-deploy/
+│   ├── SKILL.md               # Deploy workflow and size guidelines
+│   └── scripts/deploy.sh      # Bash script that tars and POSTs to Vercel's deploy API
+├── aws-deploy/
+│   ├── SKILL.md               # Deploy workflow and prerequisites
+│   ├── cloudformation/static-site.yaml  # S3 + CloudFront stack template
+│   └── scripts/deploy.sh      # Bash script that provisions and syncs to AWS
+└── gcp-deploy/
+    ├── SKILL.md               # Deploy workflow and prerequisites
+    └── scripts/deploy.sh      # Bash script that deploys to Firebase Hosting
 ```
 
-**Landing page workflow:** gather context → propose design → generate HTML → deploy via vercel-deploy
-**Scroll sequence workflow:** verify ffmpeg → analyze video → extract frames → scaffold → build HTML/CSS/JS → test → deploy via vercel-deploy
+**Landing page workflow:** gather context → propose design → generate HTML → deploy via vercel-deploy (or aws-deploy/gcp-deploy)
+**Scroll sequence workflow:** verify ffmpeg → analyze video → extract frames → scaffold → build HTML/CSS/JS → test → deploy via vercel-deploy (or aws-deploy/gcp-deploy for full-res)
+**AWS deploy workflow:** check AWS CLI + credentials → create/reuse CloudFormation stack → sync to S3 → invalidate CloudFront
+**GCP deploy workflow:** check Firebase CLI + login → scaffold firebase.json → deploy to Firebase Hosting
 
 ## Key Files
 
@@ -40,6 +49,23 @@ skills/
 - Returns JSON: `{ previewUrl, claimUrl, deploymentId, projectId }`
 - Deploy endpoint: `https://claude-skills-deploy.vercel.com/api/deploy`
 - Used by both landing-page-builder and scroll-sequence skills
+
+**`aws-deploy/scripts/deploy.sh` contract:**
+- Takes one argument: path to a directory, optional `--region` flag (default: `us-east-1`)
+- Writes status messages to **stderr**; outputs JSON response to **stdout**
+- Auto-renames a single non-`index.html` file in the directory to `index.html`
+- Creates/reuses a CloudFormation stack named `site-craft-<dirname>`
+- Returns JSON: `{ previewUrl, distributionId, bucketName, stackName, region }`
+- First deploy takes 3-5 min (CloudFront provisioning); subsequent deploys ~10s
+- Used by landing-page-builder and scroll-sequence skills as alternative to Vercel
+
+**`gcp-deploy/scripts/deploy.sh` contract:**
+- Takes one argument: path to a directory, optional `project-id`
+- Writes status messages to **stderr**; outputs JSON response to **stdout**
+- Auto-renames a single non-`index.html` file in the directory to `index.html`
+- Scaffolds `firebase.json` if missing and deploys to Firebase Hosting
+- Returns JSON: `{ hostingUrl, projectId }`
+- Used by landing-page-builder and scroll-sequence skills as alternative to Vercel/AWS
 
 **`web-design-guidelines.md`** is referenced by the landing-page-builder skill for accessibility and UX compliance rules. It is not read at install time — only when the skill executes.
 
