@@ -149,13 +149,31 @@ Write the file to a temporary project directory.
 
 ### 4. Deploy
 
-Deploy immediately after generating the HTML. Use the `vercel-deploy` skill's script:
+Deploy immediately after generating the HTML.
+
+**Option A — Vercel (default, no auth required):**
 
 ```bash
 bash skills/vercel-deploy/scripts/deploy.sh <project-directory>
 ```
 
 If the `vercel-deploy` skill is installed at a different path, look for it at `../vercel-deploy/scripts/deploy.sh` relative to this skill, or in `.claude/skills/vercel-deploy/scripts/`.
+
+**Option B — AWS S3 + CloudFront (when user requests AWS hosting):**
+
+```bash
+bash skills/aws-deploy/scripts/deploy.sh <project-directory> [--region us-east-1]
+```
+
+Use this when the user explicitly asks to deploy to AWS, host on S3, or deploy to CloudFront. Requires AWS CLI and credentials. First deploy takes 3-5 minutes; subsequent deploys reuse the same stack. If the `aws-deploy` skill is installed at a different path, look for it at `../aws-deploy/scripts/deploy.sh` relative to this skill, or in `.claude/skills/aws-deploy/scripts/`.
+
+**Option C — Google Cloud / Firebase (when user requests GCP hosting):**
+
+```bash
+bash skills/gcp-deploy/scripts/deploy.sh <project-directory> [project-id]
+```
+
+Use this when the user explicitly asks to deploy to GCP or Firebase. Requires Firebase CLI and local authentication. Firebase Hosting provides a free tier, SSL, and a global CDN. If the `gcp-deploy` skill is installed at a different path, look for it at `../gcp-deploy/scripts/deploy.sh` relative to this skill, or in `.claude/skills/gcp-deploy/scripts/`.
 
 Present results:
 

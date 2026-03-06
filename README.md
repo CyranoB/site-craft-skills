@@ -50,6 +50,26 @@ Deploy any static site directory to Vercel instantly — no authentication, no c
 - "Put this site live"
 - "Host this directory"
 
+### AWS Deploy
+
+Deploy any static site to AWS S3 + CloudFront with HTTPS, global CDN, and no size limit. Ideal for scroll-sequence sites with full-resolution frames that exceed Vercel's 4.5MB compressed payload limit. Requires AWS CLI and credentials.
+
+**Example prompts:**
+- "Deploy this to AWS"
+- "Host this on S3"
+- "Put this on CloudFront"
+- "Deploy to AWS with no size limit"
+
+### GCP Deploy
+
+Deploy any static site directory to Google Cloud via Firebase Hosting. Professional-grade static hosting with a global CDN and free SSL. Ideal for users with existing GCP projects. Requires Firebase CLI and local authentication.
+
+**Example prompts:**
+- "Deploy this to GCP"
+- "Host on Google Cloud"
+- "Publish to Firebase"
+- "Deploy to GCP/Firebase"
+
 ## Plugin structure
 
 ```
@@ -63,9 +83,13 @@ skills/
 ├── scroll-sequence/
 │   ├── SKILL.md                                 # Workflow, defaults, and animation reference
 │   └── references/implementation.md             # Full HTML/CSS/JS implementation patterns
-└── vercel-deploy/
-    ├── SKILL.md                                 # Deploy workflow and size guidelines
-    └── scripts/deploy.sh                        # Vercel claimable deployment (no auth)
+├── vercel-deploy/
+│   ├── SKILL.md                                 # Deploy workflow and size guidelines
+│   └── scripts/deploy.sh                        # Vercel claimable deployment (no auth)
+└── aws-deploy/
+    ├── SKILL.md                                 # Deploy workflow and prerequisites
+    ├── cloudformation/static-site.yaml          # S3 + CloudFront stack template
+    └── scripts/deploy.sh                        # AWS S3 + CloudFront deployment
 ```
 
 ## Installation
@@ -97,15 +121,20 @@ cp -r /tmp/site-craft-skills/skills/scroll-sequence/* .claude/skills/scroll-sequ
 # Vercel Deploy (used by both skills above)
 mkdir -p .claude/skills/vercel-deploy
 cp -r /tmp/site-craft-skills/skills/vercel-deploy/* .claude/skills/vercel-deploy/
+
+# AWS Deploy (alternative to Vercel, no size limit)
+mkdir -p .claude/skills/aws-deploy
+cp -r /tmp/site-craft-skills/skills/aws-deploy/* .claude/skills/aws-deploy/
 ```
 
 For a global install (available in all projects):
 
 ```bash
-mkdir -p ~/.claude/skills/landing-page-builder ~/.claude/skills/scroll-sequence ~/.claude/skills/vercel-deploy
+mkdir -p ~/.claude/skills/landing-page-builder ~/.claude/skills/scroll-sequence ~/.claude/skills/vercel-deploy ~/.claude/skills/aws-deploy
 cp -r /tmp/site-craft-skills/skills/landing-page-builder/* ~/.claude/skills/landing-page-builder/
 cp -r /tmp/site-craft-skills/skills/scroll-sequence/* ~/.claude/skills/scroll-sequence/
 cp -r /tmp/site-craft-skills/skills/vercel-deploy/* ~/.claude/skills/vercel-deploy/
+cp -r /tmp/site-craft-skills/skills/aws-deploy/* ~/.claude/skills/aws-deploy/
 ```
 
 ### Codex CLI
@@ -130,7 +159,7 @@ For project-level install:
 git clone https://github.com/CyranoB/site-craft-skills.git .pi/skills/site-craft-skills
 ```
 
-Pi reads `SKILL.md` files from subdirectories automatically — all three skills will be available.
+Pi reads `SKILL.md` files from subdirectories automatically — all four skills will be available.
 
 ## Credits
 
