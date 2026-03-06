@@ -57,15 +57,15 @@ Both `plugin.json` and `marketplace.json` have a `"version"` field. Keep them in
 
 **Claude Code:**
 ```
-/plugin marketplace add CyranoB/frontpage-builder-skill
-/plugin install landing-page-builder@frontpage-builder-skill
+/plugin marketplace add CyranoB/site-craft-skills
+/plugin install landing-page-builder@site-craft-skills
 ```
 
 **OpenCode** (manual file copy — no marketplace command):
 ```bash
-git clone https://github.com/CyranoB/frontpage-builder-skill.git /tmp/frontpage-builder-skill
+git clone https://github.com/CyranoB/site-craft-skills.git /tmp/site-craft-skills
 mkdir -p .claude/skills/landing-page-builder
-cp -r /tmp/frontpage-builder-skill/skills/landing-page-builder/* .claude/skills/landing-page-builder/
+cp -r /tmp/site-craft-skills/skills/landing-page-builder/* .claude/skills/landing-page-builder/
 ```
 
 Test the deploy script directly (bypassing the skill):

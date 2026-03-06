@@ -1,10 +1,10 @@
 {
-  "name": "frontpage-builder-skill",
+  "name": "site-craft-skills",
   "owner": {
     "name": "CyranoB"
   },
   "metadata": {
-    "description": "Landing page builder, scroll-sequence generator, and Vercel deployer for Claude Code"
+    "description": "Site Craft — landing page builder, scroll-sequence generator, and Vercel deployer for Claude Code"
   },
   "plugins": [
     {

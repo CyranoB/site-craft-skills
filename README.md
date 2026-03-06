@@ -1,6 +1,6 @@
-# Frontpage Builder Skills
+# Site Craft Skills
 
-A collection of [Claude Code skills](https://docs.anthropic.com/en/docs/claude-code/skills) for generating polished web experiences from natural-language descriptions.
+A collection of [Claude Code skills](https://docs.anthropic.com/en/docs/claude-code/skills) for generating and deploying polished web experiences from natural-language descriptions.
 
 ## Skills
 
@@ -75,8 +75,8 @@ skills/
 Add the marketplace and install the plugin from within Claude Code:
 
 ```
-/plugin marketplace add CyranoB/frontpage-builder-skill
-/plugin install landing-page-builder@frontpage-builder-skill
+/plugin marketplace add CyranoB/site-craft-skills
+/plugin install landing-page-builder@site-craft-skills
 ```
 
 ### OpenCode
@@ -84,28 +84,28 @@ Add the marketplace and install the plugin from within Claude Code:
 [OpenCode](https://github.com/sst/opencode) natively reads `SKILL.md` files from `.claude/skills/` directories. Clone the repo and copy the skill files into your project:
 
 ```bash
-git clone https://github.com/CyranoB/frontpage-builder-skill.git /tmp/frontpage-builder-skill
+git clone https://github.com/CyranoB/site-craft-skills.git /tmp/site-craft-skills
 
 # Landing Page Builder
 mkdir -p .claude/skills/landing-page-builder
-cp -r /tmp/frontpage-builder-skill/skills/landing-page-builder/* .claude/skills/landing-page-builder/
+cp -r /tmp/site-craft-skills/skills/landing-page-builder/* .claude/skills/landing-page-builder/
 
 # Scroll Sequence
 mkdir -p .claude/skills/scroll-sequence
-cp -r /tmp/frontpage-builder-skill/skills/scroll-sequence/* .claude/skills/scroll-sequence/
+cp -r /tmp/site-craft-skills/skills/scroll-sequence/* .claude/skills/scroll-sequence/
 
 # Vercel Deploy (used by both skills above)
 mkdir -p .claude/skills/vercel-deploy
-cp -r /tmp/frontpage-builder-skill/skills/vercel-deploy/* .claude/skills/vercel-deploy/
+cp -r /tmp/site-craft-skills/skills/vercel-deploy/* .claude/skills/vercel-deploy/
 ```
 
 For a global install (available in all projects):
 
 ```bash
 mkdir -p ~/.claude/skills/landing-page-builder ~/.claude/skills/scroll-sequence ~/.claude/skills/vercel-deploy
-cp -r /tmp/frontpage-builder-skill/skills/landing-page-builder/* ~/.claude/skills/landing-page-builder/
-cp -r /tmp/frontpage-builder-skill/skills/scroll-sequence/* ~/.claude/skills/scroll-sequence/
-cp -r /tmp/frontpage-builder-skill/skills/vercel-deploy/* ~/.claude/skills/vercel-deploy/
+cp -r /tmp/site-craft-skills/skills/landing-page-builder/* ~/.claude/skills/landing-page-builder/
+cp -r /tmp/site-craft-skills/skills/scroll-sequence/* ~/.claude/skills/scroll-sequence/
+cp -r /tmp/site-craft-skills/skills/vercel-deploy/* ~/.claude/skills/vercel-deploy/
 ```
 
 ## Credits
