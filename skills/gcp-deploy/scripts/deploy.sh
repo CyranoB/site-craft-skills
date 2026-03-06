@@ -31,8 +31,7 @@ fi
 
 # ── Check for Authentication ────────────────────────────────────────────────
 
-# Try to see if we're logged in
-if ! firebase projects:list --non-interactive &>/dev/null; then
+if ! firebase login:list 2>/dev/null | grep -q "Logged in"; then
     echo "" >&2
     echo "Error: Not authenticated with Firebase." >&2
     echo "" >&2
@@ -49,6 +48,16 @@ else
     echo "Error: Input path must be a directory" >&2
     exit 1
 fi
+
+# Track scaffolded files for cleanup on failure
+SCAFFOLDED_FILES=()
+
+cleanup_on_failure() {
+    for f in "${SCAFFOLDED_FILES[@]}"; do
+        [ -f "$f" ] && rm -f "$f"
+    done
+}
+trap 'cleanup_on_failure' ERR
 
 # Static HTML project: ensure index.html exists
 HTML_FILES=$(find "$PROJECT_PATH" -maxdepth 1 -name "*.html" -type f)
@@ -77,12 +86,40 @@ if [ ! -f "firebase.json" ]; then
     "public": ".",
     "ignore": [
       "firebase.json",
+      ".firebaserc",
       "**/.*",
       "**/node_modules/**"
     ]
   }
 }
 EOF
+    SCAFFOLDED_FILES+=("$PROJECT_PATH/firebase.json")
+fi
+
+# Scaffold .firebaserc if missing
+if [ ! -f ".firebaserc" ]; then
+    if [ -z "$PROJECT_ID" ]; then
+        echo "" >&2
+        echo "Error: No Firebase project specified and no .firebaserc found." >&2
+        echo "" >&2
+        echo "Either pass a project ID:" >&2
+        echo "  deploy.sh <directory> <project-id>" >&2
+        echo "" >&2
+        echo "Or pick from your available projects:" >&2
+        firebase projects:list --non-interactive 2>/dev/null >&2 || true
+        echo "" >&2
+        cleanup_on_failure
+        exit 1
+    fi
+    echo "Creating .firebaserc for project $PROJECT_ID..." >&2
+    cat > ".firebaserc" <<EOF
+{
+  "projects": {
+    "default": "$PROJECT_ID"
+  }
+}
+EOF
+    SCAFFOLDED_FILES+=("$PROJECT_PATH/.firebaserc")
 fi
 
 # Deploy to Firebase
@@ -91,7 +128,7 @@ if [ -n "$PROJECT_ID" ]; then
     # Use specified project
     DEPLOY_CMD="firebase deploy --only hosting --project $PROJECT_ID --non-interactive"
 else
-    # Try to use current project from .firebaserc or active project
+    # Use project from .firebaserc
     DEPLOY_CMD="firebase deploy --only hosting --non-interactive"
 fi
 

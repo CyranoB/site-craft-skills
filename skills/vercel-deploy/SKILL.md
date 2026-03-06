@@ -41,12 +41,15 @@ Then update `FRAME_COUNT` in `js/app.js` to match the new count. A typical 8-sec
 Run the deploy script:
 
 ```bash
-bash <skill-path>/scripts/deploy.sh <directory>
+bash <skill-path>/scripts/deploy.sh <directory-or-tgz>
 ```
 
+The input can be a directory or a pre-built `.tgz` file. When given a directory, the script packages it automatically (excluding `node_modules` and `.git`).
+
 The script:
-- Packages the directory into a `.tgz` (excluding `node_modules` and `.git`)
-- POSTs it to Vercel's claimable deploy endpoint
+- Errors if no `.html` files are found; warns if multiple exist without an `index.html`
+- Renames a single non-`index.html` file automatically
+- Packages the directory into a `.tgz` and POSTs it to Vercel's claimable deploy endpoint
 - Returns JSON with `previewUrl`, `claimUrl`, `deploymentId`, `projectId`
 
 ### 4. Present results

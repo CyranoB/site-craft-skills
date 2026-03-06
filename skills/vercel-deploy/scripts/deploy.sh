@@ -36,13 +36,18 @@ elif [ -d "$INPUT_PATH" ]; then
     HTML_FILES=$(find "$PROJECT_PATH" -maxdepth 1 -name "*.html" -type f)
     HTML_COUNT=$(echo "$HTML_FILES" | grep -c . || echo 0)
 
-    if [ "$HTML_COUNT" -eq 1 ]; then
+    if [ "$HTML_COUNT" -eq 0 ]; then
+        echo "Error: No .html files found in $PROJECT_PATH" >&2
+        exit 1
+    elif [ "$HTML_COUNT" -eq 1 ]; then
         HTML_FILE=$(echo "$HTML_FILES" | head -1)
         BASENAME=$(basename "$HTML_FILE")
         if [ "$BASENAME" != "index.html" ]; then
             echo "Renaming $BASENAME to index.html..." >&2
             mv "$HTML_FILE" "$PROJECT_PATH/index.html"
         fi
+    elif ! echo "$HTML_FILES" | grep -q '/index\.html$'; then
+        echo "Warning: Multiple .html files found but none is index.html. The deployment may not serve correctly." >&2
     fi
 
     echo "Creating deployment package..." >&2
@@ -53,7 +58,7 @@ else
 fi
 
 echo "Deploying to Vercel..." >&2
-RESPONSE=$(curl -s -X POST "$DEPLOY_ENDPOINT" -F "file=@$TARBALL" -F "framework=null")
+RESPONSE=$(curl -s --max-time 120 -X POST "$DEPLOY_ENDPOINT" -F "file=@$TARBALL" -F "framework=null")
 
 # Check for error in response
 if echo "$RESPONSE" | grep -q '"error"'; then

@@ -54,9 +54,6 @@ Resources:
           - ErrorCode: 403
             ResponseCode: 200
             ResponsePagePath: /index.html
-          - ErrorCode: 404
-            ResponseCode: 404
-            ResponsePagePath: /index.html
 
   BucketPolicy:
     Type: AWS::S3::BucketPolicy

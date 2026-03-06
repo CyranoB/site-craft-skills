@@ -69,7 +69,7 @@ fi
 
 # ── Check for credentials ──────────────────────────────────────────────────
 
-if ! aws sts get-caller-identity --region "$REGION" &>/dev/null; then
+ACCOUNT_ID=$(aws sts get-caller-identity --region "$REGION" --query 'Account' --output text 2>/dev/null) || {
     echo "" >&2
     echo "Error: No valid AWS credentials found." >&2
     echo "" >&2
@@ -81,15 +81,19 @@ if ! aws sts get-caller-identity --region "$REGION" &>/dev/null; then
     echo "  3. Use AWS SSO:  aws sso login" >&2
     echo "" >&2
     exit 1
-fi
-
-ACCOUNT_ID=$(aws sts get-caller-identity --region "$REGION" --query 'Account' --output text)
+}
 echo "Using AWS account $ACCOUNT_ID in $REGION" >&2
 
 # ── Derive stack name from directory ────────────────────────────────────────
 
 DIR_NAME=$(basename "$PROJECT_PATH")
 SANITIZED=$(echo "$DIR_NAME" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9-]/-/g' | sed 's/--*/-/g' | sed 's/^-//' | sed 's/-$//')
+
+if [ -z "$SANITIZED" ]; then
+    echo "Error: Could not derive a valid stack name from directory '$DIR_NAME'" >&2
+    exit 1
+fi
+
 STACK_NAME="site-craft-${SANITIZED}"
 
 # CloudFormation stack names max 128 chars
@@ -178,6 +182,30 @@ elif [[ "$STACK_STATUS" == *"IN_PROGRESS"* ]]; then
     elif [[ "$STACK_STATUS" == "DELETE_IN_PROGRESS" ]]; then
         aws cloudformation wait stack-delete-complete --stack-name "$STACK_NAME" --region "$REGION" >&2
         create_stack
+    elif [[ "$STACK_STATUS" == *"ROLLBACK_IN_PROGRESS"* ]]; then
+        # Wait for rollback to finish by polling
+        echo "Waiting for rollback to complete..." >&2
+        while true; do
+            sleep 10
+            STACK_STATUS=$(aws cloudformation describe-stacks \
+                --stack-name "$STACK_NAME" --region "$REGION" \
+                --query 'Stacks[0].StackStatus' --output text 2>/dev/null) || break
+            [[ "$STACK_STATUS" == *"IN_PROGRESS"* ]] || break
+        done
+        if [ "$STACK_STATUS" = "ROLLBACK_COMPLETE" ]; then
+            echo "Rollback complete. Deleting and recreating..." >&2
+            aws cloudformation delete-stack --stack-name "$STACK_NAME" --region "$REGION" >/dev/null
+            aws cloudformation wait stack-delete-complete --stack-name "$STACK_NAME" --region "$REGION" >&2
+            create_stack
+        elif [ "$STACK_STATUS" = "UPDATE_ROLLBACK_COMPLETE" ]; then
+            echo "Rollback complete. Stack is usable." >&2
+        else
+            echo "Error: Stack in unexpected state after rollback: $STACK_STATUS" >&2
+            exit 1
+        fi
+    else
+        echo "Error: Stack in unexpected in-progress state: $STACK_STATUS" >&2
+        exit 1
     fi
     echo "Stack ready." >&2
 else

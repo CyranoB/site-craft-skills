@@ -9,7 +9,12 @@ Deploy any static site directory to Google Cloud via Firebase Hosting. Firebase 
 
 ## When to use
 
-After generating a static site with any other skill (landing-page-builder, scroll-sequence, or manually), run this to host it on Google Cloud. Also useful when the user has an existing static site directory they want to host on Firebase.
+- User explicitly requests GCP or Firebase hosting
+- User already has a Firebase project and is logged in via `firebase login`
+- User wants free hosting with a global CDN and SSL out of the box
+- No practical file size limit (2GB per file) — suitable for large scroll-sequence sites
+
+For quick deploys without any account, use `vercel-deploy` instead. For AWS-native workflows with CloudFormation teardown, use `aws-deploy`.
 
 ## Workflow
 
@@ -21,14 +26,9 @@ The directory must contain an `index.html` at the root. If there's a single `.ht
 
 ### 2. Check Prerequisites
 
-The skill requires the Firebase CLI to be installed and authenticated. Before deploying, check if it's available:
+The skill requires the Firebase CLI to be installed and authenticated. The deploy script auto-installs `firebase-tools` via npm if missing, but the user must be logged in.
 
-```bash
-firebase --version
-```
-
-If the command is not found, tell the user:
-"Firebase CLI is not installed. To install it, run: `npm install -g firebase-tools`. Then log in with `firebase login`."
+If the script reports an authentication error, tell the user to run `firebase login`.
 
 ### 3. Deploy
 
@@ -38,9 +38,11 @@ Run the deploy script:
 bash <skill-path>/scripts/deploy.sh <directory> [project-id]
 ```
 
+The `project-id` is required on the first deploy if no `.firebaserc` exists in the directory. The user can find available projects with `firebase projects:list`.
+
 The script:
 - Ensures `index.html` exists
-- Checks for `firebase.json` and `.firebaserc`; if missing, it scaffolds them for the target directory
+- Scaffolds `firebase.json` and `.firebaserc` if missing (cleans them up on failure)
 - Runs `firebase deploy --only hosting`
 - Returns JSON with `hostingUrl` and `projectId`
 
@@ -52,7 +54,17 @@ Tell the user:
 - **Project ID**: The GCP/Firebase project used for deployment
 
 If the deploy fails, check:
-- Is `firebase-tools` installed?
 - Is the user logged in (`firebase login`)?
 - Is the `project-id` valid and does the user have permissions?
 - Is `index.html` present?
+- Does npm exist (needed for auto-install of `firebase-tools`)?
+
+### 5. Cleanup
+
+To remove a deployment and stop hosting:
+
+```bash
+firebase hosting:disable --project <project-id>
+```
+
+To delete the Firebase project entirely, use the [Firebase Console](https://console.firebase.google.com/).

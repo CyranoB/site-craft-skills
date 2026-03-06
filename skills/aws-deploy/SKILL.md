@@ -67,10 +67,19 @@ Subsequent deploys update in ~10 seconds + cache invalidation time.
 
 ### 4. Cleanup
 
-To tear down all resources for a deployment, empty the bucket first (CloudFormation can't delete a non-empty S3 bucket), then delete the stack:
+To tear down all resources for a deployment, empty the bucket first (CloudFormation can't delete a non-empty S3 bucket), then delete the stack.
+
+Find the bucket name from the stack outputs:
 
 ```bash
-aws s3 rm s3://site-craft-<name>-<account-id> --recursive --region us-east-1
+aws cloudformation describe-stacks --stack-name site-craft-<name> --region us-east-1 \
+  --query 'Stacks[0].Outputs[?OutputKey==`BucketName`].OutputValue' --output text
+```
+
+Then empty and delete:
+
+```bash
+aws s3 rm s3://<bucket-name> --recursive --region us-east-1
 aws cloudformation delete-stack --stack-name site-craft-<name> --region us-east-1
 ```
 
