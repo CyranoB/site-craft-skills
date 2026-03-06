@@ -108,6 +108,14 @@ cp -r /tmp/site-craft-skills/skills/scroll-sequence/* ~/.claude/skills/scroll-se
 cp -r /tmp/site-craft-skills/skills/vercel-deploy/* ~/.claude/skills/vercel-deploy/
 ```
 
+### Codex CLI
+
+[Codex](https://github.com/openai/codex) discovers skills from `~/.codex/skills/`. Clone the repo:
+
+```bash
+git clone https://github.com/CyranoB/site-craft-skills.git ~/.codex/skills/site-craft-skills
+```
+
 ### Pi Coding Agent
 
 [Pi](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent) discovers skills from `~/.pi/agent/skills/` or `.pi/skills/` directories. Clone the repo into Pi's skill directory:
