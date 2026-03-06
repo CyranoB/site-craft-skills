@@ -6,7 +6,7 @@ A collection of [Claude Code skills](https://docs.anthropic.com/en/docs/claude-c
 
 ### Landing Page Builder
 
-Generates distinctive landing pages from a text description and deploys them live to Vercel — no authentication required.
+Generates distinctive landing pages from a text description and deploys them live to Vercel (no auth required), AWS S3+CloudFront, or Firebase Hosting.
 
 1. Takes a natural-language description of a product, service, or idea
 2. Generates a self-contained `index.html` with inline CSS/JS
@@ -37,7 +37,7 @@ Every generated page follows an opinionated design approach:
 - **No AI slop** — no purple-gradient-on-white, no generic card grids, no cookie-cutter hero sections
 - **Bold aesthetics** — each page commits to a specific direction (brutalist, editorial, retro-futuristic, luxury, etc.)
 - **Distinctive typography** — characterful Google Fonts pairings, never Inter/Roboto/Arial
-- **Production quality** — responsive, accessible, semantic HTML, `prefers-reduced-motion` support
+- **Production quality** — responsive, accessible, semantic HTML, `prefers-reduced-motion` support, noscript fallbacks, under 200KB
 
 Design guidelines are adapted from [Anthropic's frontend-design skill](https://github.com/anthropics/skills/tree/main/skills/frontend-design) and [Vercel's Web Interface Guidelines](https://github.com/vercel-labs/web-interface-guidelines).
 
@@ -86,10 +86,13 @@ skills/
 ├── vercel-deploy/
 │   ├── SKILL.md                                 # Deploy workflow and size guidelines
 │   └── scripts/deploy.sh                        # Vercel claimable deployment (no auth)
-└── aws-deploy/
+├── aws-deploy/
+│   ├── SKILL.md                                 # Deploy workflow and prerequisites
+│   ├── cloudformation/static-site.yaml          # S3 + CloudFront stack template
+│   └── scripts/deploy.sh                        # AWS S3 + CloudFront deployment
+└── gcp-deploy/
     ├── SKILL.md                                 # Deploy workflow and prerequisites
-    ├── cloudformation/static-site.yaml          # S3 + CloudFront stack template
-    └── scripts/deploy.sh                        # AWS S3 + CloudFront deployment
+    └── scripts/deploy.sh                        # Firebase Hosting deployment
 ```
 
 ## Installation
@@ -125,16 +128,21 @@ cp -r /tmp/site-craft-skills/skills/vercel-deploy/* .claude/skills/vercel-deploy
 # AWS Deploy (alternative to Vercel, no size limit)
 mkdir -p .claude/skills/aws-deploy
 cp -r /tmp/site-craft-skills/skills/aws-deploy/* .claude/skills/aws-deploy/
+
+# GCP Deploy (Firebase Hosting)
+mkdir -p .claude/skills/gcp-deploy
+cp -r /tmp/site-craft-skills/skills/gcp-deploy/* .claude/skills/gcp-deploy/
 ```
 
 For a global install (available in all projects):
 
 ```bash
-mkdir -p ~/.claude/skills/landing-page-builder ~/.claude/skills/scroll-sequence ~/.claude/skills/vercel-deploy ~/.claude/skills/aws-deploy
+mkdir -p ~/.claude/skills/landing-page-builder ~/.claude/skills/scroll-sequence ~/.claude/skills/vercel-deploy ~/.claude/skills/aws-deploy ~/.claude/skills/gcp-deploy
 cp -r /tmp/site-craft-skills/skills/landing-page-builder/* ~/.claude/skills/landing-page-builder/
 cp -r /tmp/site-craft-skills/skills/scroll-sequence/* ~/.claude/skills/scroll-sequence/
 cp -r /tmp/site-craft-skills/skills/vercel-deploy/* ~/.claude/skills/vercel-deploy/
 cp -r /tmp/site-craft-skills/skills/aws-deploy/* ~/.claude/skills/aws-deploy/
+cp -r /tmp/site-craft-skills/skills/gcp-deploy/* ~/.claude/skills/gcp-deploy/
 ```
 
 ### Codex CLI
