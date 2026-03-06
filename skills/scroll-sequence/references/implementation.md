@@ -223,6 +223,7 @@ html, body { background: var(--bg-dark); color: var(--text-on-dark); font-family
 }
 
 /* --- Mobile (<768px) --- */
+/* Requires: <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"> */
 @media (max-width: 767px) {
   .align-left,
   .align-right {
@@ -243,6 +244,10 @@ html, body { background: var(--bg-dark); color: var(--text-on-dark); font-family
 
   #scroll-container { height: 550vh; }
 
+  /* Safe area for notched phones */
+  .site-header { padding-top: max(1rem, env(safe-area-inset-top)); }
+  .hero-standalone { padding-bottom: env(safe-area-inset-bottom); }
+
   .hero-heading { font-size: 3rem; }
   .section-heading { font-size: 2rem; }
   .marquee-text { font-size: 8vw; }
@@ -260,7 +265,8 @@ html, body { background: var(--bg-dark); color: var(--text-on-dark); font-family
 const lenis = new Lenis({
   duration: 1.2,
   easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-  smoothWheel: true
+  smoothWheel: true,
+  smoothTouch: true   // Required for iOS Safari — without this, momentum scrolling fights with Lenis
 });
 lenis.on("scroll", ScrollTrigger.update);
 gsap.ticker.add((time) => lenis.raf(time * 1000));
@@ -274,11 +280,18 @@ gsap.ticker.lagSmoothing(0);
 Two-phase loading for fast first paint:
 
 ```js
-const FRAME_COUNT = /* set from extracted frame count */;
+const TOTAL_FRAMES = /* set from extracted frame count */;
+// Mobile: cap at 150 frames to avoid tab crashes from memory pressure.
+// We load every Nth frame and remap scroll progress to the reduced set.
+const isMobileDevice = window.matchMedia("(max-width: 767px)").matches;
+const FRAME_STEP = isMobileDevice ? Math.max(1, Math.ceil(TOTAL_FRAMES / 150)) : 1;
+const FRAME_COUNT = Math.ceil(TOTAL_FRAMES / FRAME_STEP);
 const frames = new Array(FRAME_COUNT);
 let loadedCount = 0;
 
 function loadFrame(index) {
+  // Map reduced index back to actual frame file number
+  const fileIndex = index * FRAME_STEP;
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = () => {
@@ -288,7 +301,7 @@ function loadFrame(index) {
       resolve();
     };
     img.onerror = () => resolve(); // skip broken frames
-    img.src = `frames/frame_${String(index + 1).padStart(4, "0")}.webp`;
+    img.src = `frames/frame_${String(fileIndex + 1).padStart(4, "0")}.webp`;
   });
 }
 
@@ -327,7 +340,11 @@ Includes the `sampleBgColor()` function for seamless edge blending:
 ```js
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
-const IMAGE_SCALE = 0.85; // 0.82-0.90 sweet spot
+const isMobile = window.matchMedia("(max-width: 767px)").matches;
+// Desktop: 0.82-0.90 gives a subtle padded-cover effect with bg sampling.
+// Mobile: tall viewports (9:19.5) cause extreme letterboxing at 0.85 — bump to 0.95
+// so the video fills the screen without distracting background bars.
+const IMAGE_SCALE = isMobile ? 0.95 : 0.85;
 let bgColor = "#111111"; // default, updated by sampling
 
 // Resize canvas to viewport with devicePixelRatio for crisp rendering

@@ -108,7 +108,7 @@ Required `<head>` content:
 
 ```html
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="description" content="[PROJECT_DESCRIPTION]">
 <meta property="og:title" content="[PROJECT_NAME]">
 <meta property="og:description" content="[PROJECT_DESCRIPTION]">
@@ -151,7 +151,7 @@ The JavaScript has 9 components. Read `references/implementation.md` for the com
 
 | Component | Purpose |
 |-----------|---------|
-| **Lenis setup** | Smooth scroll interpolation — mandatory for frame playback to feel good |
+| **Lenis setup** | Smooth scroll interpolation — mandatory for frame playback to feel good. Must include `smoothTouch: true` for iOS Safari |
 | **Frame preloader** | Two-phase: 10 frames fast, then the rest. Shows progress bar. |
 | **Canvas renderer** | Padded cover mode (IMAGE_SCALE 0.82-0.90) with background color sampled from frame edges |
 | **Frame-to-scroll binding** | Maps scroll progress to frame index with FRAME_SPEED acceleration |
@@ -201,13 +201,15 @@ GCP/Firebase has no strict payload size limit for Hosting — deploy full-resolu
 
 ## Mobile Considerations
 
-Mobile is where scroll-driven video sites break hardest. Pay attention to:
+Mobile is where scroll-driven video sites break hardest. These are requirements, not suggestions:
 
-- **Memory**: Mobile browsers aggressively kill tabs using too much memory. Cap frames at 150 and resolution at 1280px wide for mobile. Consider using `matchMedia` to load fewer frames on small screens.
-- **Touch vs. wheel**: Lenis handles touch events, but test that scroll feels smooth on iOS Safari (which has its own momentum scrolling). `smoothTouch: true` can help.
+- **Memory**: Mobile browsers aggressively kill tabs using too much memory. Use `matchMedia("(max-width: 767px)")` to load a reduced frame set on mobile — cap at 150 frames and 1280px resolution. The implementation reference includes a `getMobileFrameCount()` helper for this.
+- **Touch scrolling**: Lenis must include `smoothTouch: true` — without it, iOS Safari's momentum scrolling fights with Lenis and causes choppy frame playback.
+- **Canvas scaling**: On tall mobile viewports (9:19.5 aspect), the desktop `IMAGE_SCALE: 0.85` causes excessive letterboxing — the video appears small with large background bars. Increase to `IMAGE_SCALE: 0.95` on mobile so the video fills the screen. The implementation reference includes a responsive scale calculation.
 - **Layout**: Collapse side-aligned text to full-width centered with a dark backdrop behind it (so text reads over the video). See the mobile CSS in `references/implementation.md`.
-- **Scroll height**: Reduce from 800vh+ to ~550vh — mobile users scroll faster and have less patience for long pages.
+- **Scroll height**: The mobile CSS reduces scroll height from 800vh+ to 550vh. Animations pass faster at 550vh — each 14% section range covers ~77vh instead of ~112vh. This is intentional; mobile users scroll faster and have less patience for long pages.
 - **Typography**: Scale down massively — hero to ~3rem, headings to ~2rem. The desktop sizes will overflow on small screens.
+- **Viewport**: Use `viewport-fit=cover` in the meta tag so the canvas extends into the safe area on notched phones.
 
 ## Animation Types Quick Reference
 
