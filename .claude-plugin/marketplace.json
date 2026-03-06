@@ -11,7 +11,7 @@
       "name": "landing-page-builder",
       "source": "./",
       "description": "Build and deploy polished landing pages to Vercel from a text description",
-      "version": "1.2.0",
+      "version": "1.3.0",
       "keywords": ["landing-page", "frontend", "vercel", "deploy"],
       "category": "development"
     },

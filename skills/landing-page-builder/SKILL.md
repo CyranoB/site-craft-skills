@@ -34,13 +34,13 @@ Present your recommendation with:
 - **Vibe** — one sentence capturing the feel
 - **Key choices** — font pairing direction, color palette mood, layout approach
 
-Ask the user to confirm this direction, or say they'd like to see alternatives. If the user wants alternatives, propose **2–3 different directions** to choose from.
+If the user's prompt already implies a clear aesthetic (e.g., "brutalist page with earth tones" or "minimal black-and-white"), skip the confirmation and execute directly — repeating their own direction back to them wastes a round-trip. Only present and confirm when the aesthetic is genuinely ambiguous. If the user wants alternatives, propose **2–3 different directions** to choose from.
 
 #### 2b. Execute the confirmed direction
 
 Once the user confirms, commit to the direction fully and execute with conviction:
 
-**Typography**: Choose distinctive, characterful fonts from Google Fonts. Never default to Inter, Roboto, Arial, or system fonts. Consider using a single font family cohesively (e.g., DM Sans + DM Mono, or a display weight paired with its regular weight) — this often produces more polished results than mixing two unrelated display fonts. Use tight letter-spacing on headings (`-0.02em` to `-0.04em`) for a modern editorial feel. Every landing page should use different fonts — never converge on the same choices.
+**Typography**: Choose distinctive, characterful fonts from Google Fonts. Never default to Inter, Roboto, Arial, or system fonts. Consider using a single font family cohesively (e.g., DM Sans + DM Mono, or a display weight paired with its regular weight) — this often produces more polished results than mixing two unrelated display fonts. Use tight letter-spacing on headings (`-0.02em` to `-0.04em`) for a modern editorial feel. Every landing page should use different fonts — never converge on the same choices. **Watch font weight at hero scale** — many serif and display fonts look elegant at body size but become visually heavy at 3rem+. For large hero headings, prefer lighter weights (300–500) or fonts designed with optical sizing (`opsz`). Test mentally: if the headline feels like it's shouting, dial the weight back.
 
 **Color**: Commit to a cohesive palette. Define all tokens in a `:root` block at the top of your `<style>` tag before writing any other CSS. Every color and spacing value in the stylesheet must reference a token — no hardcoded hex values or magic pixel sizes outside `:root`.
 
@@ -67,7 +67,7 @@ Once the user confirms, commit to the direction fully and execute with convictio
 
 Dominant colors with sharp accents outperform timid, evenly-distributed palettes. **Light themes are underused and often more distinctive** — warm off-whites, cream, and parchment backgrounds with bold primary colors (deep greens, navy, terracotta) feel fresh and confident. Don't default to dark themes; choose the theme that best serves the brand. A craft cocktail bar might warrant dark and moody, but a freelancer productivity tool might shine on a warm light background with earthy accents. Vary across generations.
 
-**Motion**: Focus on physical, tactile feedback over flashy effects. Subtle `scale(0.97)` on button press feels more polished than a glowing box-shadow. One well-orchestrated page load with staggered reveals (`animation-delay`) creates more delight than scattered micro-interactions. Scroll-triggered fade-ins via `IntersectionObserver` (starting from `opacity: 0; transform: translateY(20px)`) add life without being distracting. CSS-only solutions preferred.
+**Motion**: Focus on physical, tactile feedback over flashy effects. Subtle `scale(0.97)` on button press feels more polished than a glowing box-shadow. One well-orchestrated page load with staggered reveals (`animation-delay`) creates more delight than scattered micro-interactions. Scroll-triggered fade-ins via `IntersectionObserver` (starting from `opacity: 0; transform: translateY(20px)`) add life without being distracting. CSS-only solutions preferred. **Critical: always include a no-JS fallback** — add `<noscript><style>.reveal{opacity:1!important;transform:none!important}</style></noscript>` so content is visible if JavaScript fails to load. Never leave sections invisible by default.
 
 **Layout**: Centered, focused layouts with controlled reading widths (`max-width` on headings and body text) often feel more editorial and intentional than split-column layouts. That said, when the product has a visual demo to show (a terminal, a dashboard, an app screenshot), a two-column hero with the demo alongside the headline is powerful — it tells the product story above the fold. Choose the layout that serves the content, not the one that fills the most space.
 
@@ -77,7 +77,7 @@ Dominant colors with sharp accents outperform timid, evenly-distributed palettes
 - Purple/violet gradients on white or dark backgrounds
 - Teal/cyan neon accents on dark navy (`#0a-#0f` range backgrounds with `#00D4xx` accents) — this is the dark-mode equivalent of purple-on-white
 - Card grids where every card looks identical until hovered
-- Uppercase section labels with wide letter-spacing ("FEATURES", "HOW IT WORKS")
+- Uppercase section labels with wide letter-spacing ("FEATURES", "HOW IT WORKS") — this applies even in brutalist/industrial themes where uppercase feels "on-brand"; find a different way to signal structure (numbered sections, inline labels, typographic scale shifts)
 - Glowing box-shadows on hover (`rgba(primary, 0.3)` blur effects)
 - Background glow blobs (large radial gradients floating behind content)
 - Floating cards offset from mockups
@@ -91,6 +91,19 @@ Each page must feel like a human designer made it for this specific business. As
 - **Prices** when the product/service has them — omitting prices when they exist feels evasive
 - **Specific details** over vague claims — "Works with Figma, VS Code, and Notion" beats "Integrates with your favorite tools"; "Thursday at 7 PM, $65/person, max 12 people" beats "Weekly classes available"
 - **Honest-feeling statistics** — "4,200+ users" feels more credible than "12,000+ users" for an early-stage product
+
+**Copy length**: If the user provides specific copy or indicates a preferred length, use that. Otherwise, apply these defaults — they're calibrated to feel substantive without overwhelming:
+
+| Section | Headline | Supporting text |
+|---------|----------|-----------------|
+| Hero | 4–8 words | Subhead: 12–20 words |
+| Features | 3–5 words per feature | 1–2 sentences each |
+| Testimonials | — | 1–3 sentences per quote |
+| Pricing | Plan name + price | 4–6 bullet points per tier |
+| CTA | 4–8 words | Subhead: 10–15 words |
+| Footer | — | Links + one-liner tagline |
+
+Err on the side of concise. A landing page that breathes converts better than a wall of text.
 
 **Icons**: Pick one icon library per page based on the design direction:
 
@@ -106,7 +119,7 @@ Match the library to the page's aesthetic. Phosphor's weight variants are especi
 
 Tell the user: **"Building your page…"**
 
-Generate a single `index.html` file. All CSS and JS inline. The file must be self-contained and deployable with no build step.
+Generate a single `index.html` file. All CSS and JS inline. The file must be self-contained and deployable with no build step. Keep the total file under 200KB — avoid base64-encoded images or large inline SVGs; use external URLs or CSS-generated textures instead.
 
 Structure:
 
@@ -141,39 +154,71 @@ Requirements:
 - Honor `prefers-reduced-motion`
 - Semantic HTML: `<header>`, `<main>`, `<section>`, `<footer>`, `<nav>`
 - Accessible: form labels, `aria-label` on icon buttons, `:focus-visible` states, skip link
-- Include Open Graph (`og:title`, `og:description`, `og:type`) and Twitter Card (`twitter:card`, `twitter:title`, `twitter:description`) meta tags when the page is for a publicly shared product or service. Omit them for personal or internal pages, or if the user opts out.
-- Include a `<script type="application/ld+json">` block in `<head>` with structured data matching the page content. Use `Organization` for company/startup pages, `Product` for product launches, `LocalBusiness` for local services, or another appropriate schema.org type. Populate `name`, `description`, and `url` (leave `url` empty — it's filled post-deploy).
+- Always include Open Graph (`og:title`, `og:description`, `og:image`, `og:type`) and Twitter Card (`twitter:card`, `twitter:title`, `twitter:description`) meta tags. Landing pages are shared — these ensure proper previews on social media and messaging apps.
+- Include a `<script type="application/ld+json">` block in `<head>` with structured data matching the page content. Use `Organization` for company/startup pages, `Product` for product launches, `LocalBusiness` for local services, or another appropriate schema.org type. Template:
+  ```json
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Acme Co",
+    "description": "Short description of the business",
+    "url": ""
+  }
+  ```
+  Leave `url` empty — it's filled post-deploy. Add relevant properties for the chosen type (e.g., `priceRange` and `address` for `LocalBusiness`, `offers` for `Product`).
 - For detailed compliance rules, read `references/web-design-guidelines.md`
 
 Write the file to a temporary project directory.
 
-### 4. Deploy
+### 4. Verify
+
+Before deploying, do a quick sanity check on the generated file:
+
+```bash
+wc -c <project-directory>/index.html
+```
+
+Confirm:
+- File is under 200KB
+- No broken Google Fonts URLs (every `family=` parameter matches a real font)
+- No placeholder text left behind ("Lorem ipsum", "Your Company", "TODO")
+- OG meta tags are present
+
+If any check fails, fix inline before proceeding.
+
+### 5. Deploy
 
 Deploy immediately after generating the HTML.
+
+Locate the deploy script once — it lives next to this skill:
+
+```bash
+DEPLOY_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")/.." 2>/dev/null && pwd || echo "skills")"
+```
+
+If that fails, fall back to `find . -path "*/vercel-deploy/scripts/deploy.sh" -type f | head -1`.
 
 **Option A — Vercel (default, no auth required):**
 
 ```bash
-bash skills/vercel-deploy/scripts/deploy.sh <project-directory>
+bash "$DEPLOY_ROOT/vercel-deploy/scripts/deploy.sh" <project-directory>
 ```
-
-If the `vercel-deploy` skill is installed at a different path, look for it at `../vercel-deploy/scripts/deploy.sh` relative to this skill, or in `.claude/skills/vercel-deploy/scripts/`.
 
 **Option B — AWS S3 + CloudFront (when user requests AWS hosting):**
 
 ```bash
-bash skills/aws-deploy/scripts/deploy.sh <project-directory> [--region us-east-1]
+bash "$DEPLOY_ROOT/aws-deploy/scripts/deploy.sh" <project-directory> [--region us-east-1]
 ```
 
-Use this when the user explicitly asks to deploy to AWS, host on S3, or deploy to CloudFront. Requires AWS CLI and credentials. First deploy takes 3-5 minutes; subsequent deploys reuse the same stack. If the `aws-deploy` skill is installed at a different path, look for it at `../aws-deploy/scripts/deploy.sh` relative to this skill, or in `.claude/skills/aws-deploy/scripts/`.
+Requires AWS CLI and credentials. First deploy takes 3-5 minutes; subsequent deploys reuse the same stack.
 
 **Option C — Google Cloud / Firebase (when user requests GCP hosting):**
 
 ```bash
-bash skills/gcp-deploy/scripts/deploy.sh <project-directory> [project-id]
+bash "$DEPLOY_ROOT/gcp-deploy/scripts/deploy.sh" <project-directory> [project-id]
 ```
 
-Use this when the user explicitly asks to deploy to GCP or Firebase. Requires Firebase CLI and local authentication. Firebase Hosting provides a free tier, SSL, and a global CDN. If the `gcp-deploy` skill is installed at a different path, look for it at `../gcp-deploy/scripts/deploy.sh` relative to this skill, or in `.claude/skills/gcp-deploy/scripts/`.
+Requires Firebase CLI and local authentication. Firebase Hosting provides a free tier, SSL, and a global CDN.
 
 Present results:
 

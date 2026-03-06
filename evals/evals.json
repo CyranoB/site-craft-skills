@@ -1,0 +1,62 @@
+{
+  "skill_name": "landing-page-builder",
+  "evals": [
+    {
+      "id": 0,
+      "name": "coffee-roastery",
+      "prompt": "I need a brutalist landing page for my specialty coffee roastery called Ember & Ash. Dark theme, earthy tones. We do single-origin beans from Ethiopia and Colombia. $18-24 per bag, subscription available at $15/bag.",
+      "expected_output": "A brutalist dark-themed landing page with earthy colors, specific pricing, no design confirmation step (clear aesthetic), proper JSON-LD and OG tags",
+      "files": [],
+      "assertions": [
+        { "name": "has-css-root-tokens", "description": "HTML contains a :root block with CSS custom properties (--color-*, --font-*)" },
+        { "name": "has-og-tags", "description": "HTML contains og:title, og:description, and twitter:card meta tags" },
+        { "name": "has-json-ld", "description": "HTML contains a script type=application/ld+json block with schema.org structured data" },
+        { "name": "has-pricing", "description": "HTML contains the specific prices from the prompt ($18, $24, $15 or equivalent)" },
+        { "name": "no-anti-slop", "description": "No purple/violet gradients, no glowing box-shadows, no uppercase FEATURES/HOW IT WORKS labels with letter-spacing" },
+        { "name": "under-200kb", "description": "File size is under 200KB (204800 bytes)" },
+        { "name": "has-skip-link", "description": "HTML contains an accessibility skip-to-content link" },
+        { "name": "has-prefers-reduced-motion", "description": "CSS contains prefers-reduced-motion media query" },
+        { "name": "uses-google-fonts", "description": "Loads Google Fonts (fonts.googleapis.com) and does NOT use Inter, Roboto, or Arial as primary fonts" },
+        { "name": "semantic-html", "description": "Uses semantic elements: <header>, <main>, <section>, <footer>" }
+      ]
+    },
+    {
+      "id": 1,
+      "name": "dog-walking-app",
+      "prompt": "Build me a landing page for a dog walking app called PawPals",
+      "expected_output": "A landing page with a proposed design direction (ambiguous prompt), distinctive non-generic design, realistic content with testimonials and specific details",
+      "files": [],
+      "assertions": [
+        { "name": "has-css-root-tokens", "description": "HTML contains a :root block with CSS custom properties (--color-*, --font-*)" },
+        { "name": "has-og-tags", "description": "HTML contains og:title, og:description, and twitter:card meta tags" },
+        { "name": "has-json-ld", "description": "HTML contains a script type=application/ld+json block with schema.org structured data" },
+        { "name": "has-testimonials", "description": "HTML contains at least 2 testimonials with named people (first + last name or first name + role)" },
+        { "name": "no-anti-slop", "description": "No purple/violet gradients, no glowing box-shadows, no uppercase FEATURES/HOW IT WORKS labels with letter-spacing" },
+        { "name": "under-200kb", "description": "File size is under 200KB (204800 bytes)" },
+        { "name": "has-skip-link", "description": "HTML contains an accessibility skip-to-content link" },
+        { "name": "has-prefers-reduced-motion", "description": "CSS contains prefers-reduced-motion media query" },
+        { "name": "uses-google-fonts", "description": "Loads Google Fonts (fonts.googleapis.com) and does NOT use Inter, Roboto, or Arial as primary fonts" },
+        { "name": "semantic-html", "description": "Uses semantic elements: <header>, <main>, <section>, <footer>" }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "piano-teacher",
+      "prompt": "Create a website for my piano teaching business. I'm Sarah Chen, I teach in Portland, OR. Been teaching 12 years, beginners through advanced, ages 6+. $65/hour private, $45/hour group. Studio in the Pearl District.",
+      "expected_output": "A landing page with LocalBusiness JSON-LD, specific pricing, OG tags, concise copy following length defaults, warm/inviting design",
+      "files": [],
+      "assertions": [
+        { "name": "has-css-root-tokens", "description": "HTML contains a :root block with CSS custom properties (--color-*, --font-*)" },
+        { "name": "has-og-tags", "description": "HTML contains og:title, og:description, and twitter:card meta tags" },
+        { "name": "has-json-ld-local-business", "description": "HTML contains JSON-LD with @type LocalBusiness (or MusicSchool or similar local type)" },
+        { "name": "has-pricing", "description": "HTML contains both prices ($65 and $45) from the prompt" },
+        { "name": "has-specific-details", "description": "HTML mentions Portland, Pearl District, Sarah Chen, and 12 years of experience" },
+        { "name": "no-anti-slop", "description": "No purple/violet gradients, no glowing box-shadows, no uppercase FEATURES/HOW IT WORKS labels with letter-spacing" },
+        { "name": "under-200kb", "description": "File size is under 200KB (204800 bytes)" },
+        { "name": "has-skip-link", "description": "HTML contains an accessibility skip-to-content link" },
+        { "name": "has-prefers-reduced-motion", "description": "CSS contains prefers-reduced-motion media query" },
+        { "name": "uses-google-fonts", "description": "Loads Google Fonts (fonts.googleapis.com) and does NOT use Inter, Roboto, or Arial as primary fonts" }
+      ]
+    }
+  ]
+}
