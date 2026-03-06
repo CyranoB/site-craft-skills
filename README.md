@@ -108,6 +108,22 @@ cp -r /tmp/site-craft-skills/skills/scroll-sequence/* ~/.claude/skills/scroll-se
 cp -r /tmp/site-craft-skills/skills/vercel-deploy/* ~/.claude/skills/vercel-deploy/
 ```
 
+### Pi Coding Agent
+
+[Pi](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent) discovers skills from `~/.pi/agent/skills/` or `.pi/skills/` directories. Clone the repo into Pi's skill directory:
+
+```bash
+git clone https://github.com/CyranoB/site-craft-skills.git ~/.pi/agent/skills/site-craft-skills
+```
+
+For project-level install:
+
+```bash
+git clone https://github.com/CyranoB/site-craft-skills.git .pi/skills/site-craft-skills
+```
+
+Pi reads `SKILL.md` files from subdirectories automatically — all three skills will be available.
+
 ## Credits
 
 Built on top of:
